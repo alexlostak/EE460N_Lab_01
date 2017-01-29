@@ -12,6 +12,8 @@
 #include <string.h> /* String operations library */
 #include <ctype.h> /* Library for useful character operations */
 #include <limits.h> /* Library for definitions of common variable type characteristics */
+#include "instructions.h"
+
 
 
 #define MAX_LINE_LENGTH 255
@@ -76,6 +78,18 @@ readAndParse( FILE * pInfile, char * pLine, char ** pLabel, char
 	   return( OK );
 }
 
+void testing(void) {
+    instr_add_imm_t testAdd;
+    testAdd.imm5 = 3;
+    testAdd.A = 1;
+    testAdd.SR1 = 2;
+    testAdd.DR1 = 5;
+    testAdd.opcode = 0xE;
+    
+    printf("Expected: 0xEAA3\n Actual: %x\n", testAdd);
+    return;
+}
+
 int main(int argc, const char * argv[]) {
     
     char lLine[MAX_LINE_LENGTH + 1], *lLabel, *lOpcode, *lArg1,
@@ -86,6 +100,9 @@ int main(int argc, const char * argv[]) {
     
 	   FILE * lInfile;
     
+    testing();
+    //testing, so returning here
+    return 0;
 	   lInfile = fopen( "data.in", "r" );	/* open the input file */
     
 	   do

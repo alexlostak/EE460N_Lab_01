@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B0E764D1E3E802A00010056 /* instructions.c in Sources */ = {isa = PBXBuildFile; fileRef = 0B0E764B1E3E802A00010056 /* instructions.c */; };
 		0BDB19E91E3D72D00068C3FD /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 0BDB19E81E3D72D00068C3FD /* main.c */; };
 /* End PBXBuildFile section */
 
@@ -23,6 +24,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0B0E764B1E3E802A00010056 /* instructions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = instructions.c; sourceTree = "<group>"; };
+		0B0E764C1E3E802A00010056 /* instructions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = instructions.h; sourceTree = "<group>"; };
 		0BDB19E51E3D72D00068C3FD /* EE460N_Lab_01 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EE460N_Lab_01; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BDB19E81E3D72D00068C3FD /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		5772FA891E3D7A3E00A756E0 /* data.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = data.in; sourceTree = "<group>"; };
@@ -58,6 +61,8 @@
 		0BDB19E71E3D72D00068C3FD /* EE460N_Lab_01 */ = {
 			isa = PBXGroup;
 			children = (
+				0B0E764B1E3E802A00010056 /* instructions.c */,
+				0B0E764C1E3E802A00010056 /* instructions.h */,
 				0BDB19E81E3D72D00068C3FD /* main.c */,
 				5772FA891E3D7A3E00A756E0 /* data.in */,
 			);
@@ -121,6 +126,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B0E764D1E3E802A00010056 /* instructions.c in Sources */,
 				0BDB19E91E3D72D00068C3FD /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
