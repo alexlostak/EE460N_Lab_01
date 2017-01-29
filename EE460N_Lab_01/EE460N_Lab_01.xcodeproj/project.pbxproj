@@ -25,6 +25,7 @@
 /* Begin PBXFileReference section */
 		0BDB19E51E3D72D00068C3FD /* EE460N_Lab_01 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EE460N_Lab_01; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BDB19E81E3D72D00068C3FD /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		5772FA891E3D7A3E00A756E0 /* data.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = data.in; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +59,7 @@
 			isa = PBXGroup;
 			children = (
 				0BDB19E81E3D72D00068C3FD /* main.c */,
+				5772FA891E3D7A3E00A756E0 /* data.in */,
 			);
 			path = EE460N_Lab_01;
 			sourceTree = "<group>";
@@ -246,6 +248,7 @@
 				0BDB19EE1E3D72D00068C3FD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
