@@ -8,4 +8,10 @@
 
 #include "instructions.h"
 
-
+instr_add_imm_t* instr_add_imm_t_new (void) {
+    instr_add_imm_t* i = malloc(sizeof(instr_add_imm_t));
+    
+    
+    
+    return i;
+}
