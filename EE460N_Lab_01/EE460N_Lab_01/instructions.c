@@ -26,7 +26,6 @@ instr_t* instr_new (char* lLabel, uint16_t lOpcode, char* lArg1, char* lArg2, ch
     i->arg3 = lArg3;
     i->arg4 = lArg4;
     return i;
-    
 }
 
 

@@ -51,28 +51,28 @@ int main(int argc, const char * argv[]) {
     FILE * lInfile;
     
     SymbolTable_t* symbolTable = malloc(sizeof(SymbolTable_t) * 100);
-    
+ 
     lInfile = fopen( "data.in", "r" );	/* open the input file */
     do
-    {
-        lRet = readAndParse( lInfile, lLine, &lLabel,
-                            &lOpcode, &lArg1, &lArg2, &lArg3, &lArg4 );
-        if( lRet != DONE && lRet != EMPTY_LINE )
         {
-            if (!strcmp(lOpcode, ".orig")) {
-                address = toNum(lArg1);
-            }
-            if (strcmp(lLabel,"")) {
-                symbolTable[j].symbol = malloc(strlen(lLabel) + 1);
-                strcpy(symbolTable[j].symbol, lLabel);
-                symbolTable[j].address = address;
-                j++;
-            }
-            printf("%x - %s %s %s %s %s %s \n", address, lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4);
-            i++;
-            address += 2;
-        }
-    } while( lRet != DONE );
+           lRet = readAndParse( lInfile, lLine, &lLabel,
+                               &lOpcode, &lArg1, &lArg2, &lArg3, &lArg4 );
+           if( lRet != DONE && lRet != EMPTY_LINE )
+           {
+               if (!strcmp(lOpcode, ".orig")) {
+                   address = toNum(lArg1);
+               }
+               if (strcmp(lLabel,"")) {
+                   symbolTable[j].symbol = malloc(strlen(lLabel) + 1);
+                   strcpy(symbolTable[j].symbol, lLabel);
+                   symbolTable[j].address = address;
+                   j++;
+               }
+               printf("%x - %s %s %s %s %s %s \n", address, lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4);
+               i++;
+               address += 2;
+           }
+       } while( lRet != DONE );
     
     printf("\nSymbol Table\n");
     for (i = 0; i < j; i++) {
