@@ -59,6 +59,7 @@ int main(int argc, const char * argv[]) {
                printf("Line %d - %s %s %s %s %s %s \n", i, lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4);
                i++;
                
+               
            }
        } while( lRet != DONE );
     return 0;

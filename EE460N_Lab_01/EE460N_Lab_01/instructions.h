@@ -11,6 +11,18 @@
 
 #include <stdio.h>
 
+
+//lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4
+typedef struct instr {
+    char* label;
+    uint16_t opcode;
+    char* arg1;
+    char* arg2;
+    char* arg3;
+    char* arg4;
+} instr_t;
+
+
 typedef struct instr_add_imm {
     uint16_t imm5 : 5;
     uint16_t A : 1;
