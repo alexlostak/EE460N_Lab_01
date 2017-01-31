@@ -48,7 +48,9 @@ int main(int argc, const char * argv[]) {
     int i = 0;
     int j = 0;
     int address = 0;
+    instr_general_t* instrRepresentation;
     FILE * lInfile;
+    instr_t* currentInstruction;
     
     SymbolTable_t* symbolTable = malloc(sizeof(SymbolTable_t) * 100);
     
@@ -62,12 +64,14 @@ int main(int argc, const char * argv[]) {
             if (!strcmp(lOpcode, ".orig")) {
                 address = toNum(lArg1);
             }
-            if (strcmp(lLabel,"")) {
+            /*
+            if (strcmp(lLabel,"")) {  /* If there is a label
                 symbolTable[j].symbol = malloc(strlen(lLabel) + 1);
                 strcpy(symbolTable[j].symbol, lLabel);
                 symbolTable[j].address = address;
                 j++;
             }
+             */
             printf("%x - %s %s %s %s %s %s \n", address, lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4);
             i++;
             address += 2;
@@ -75,8 +79,27 @@ int main(int argc, const char * argv[]) {
     } while( lRet != DONE );
     
     printf("\nSymbol Table\n");
-    for (i = 0; i < j; i++) {
+    /*for (i = 0; i < j; i++) {
         printf("%s - %x\n", symbolTable[i].symbol, symbolTable[i].address);
     }
+    printf("entering second pass");
+     */
+    printf("\nSymbol Table\n");
+    rewind(lInfile);
+    printf("\nSymbol Table\n");
+    do
+    {
+        lRet = readAndParse( lInfile, lLine, &lLabel,
+                            &lOpcode, &lArg1, &lArg2, &lArg3, &lArg4 );
+        if( lRet != DONE && lRet != EMPTY_LINE )
+        {
+            printf("entering instr_new");
+            currentInstruction = instr_new(lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4);
+            instrRepresentation = repInstruction(currentInstruction);
+        /*   writeToFile(instrRepresentation); */
+            printf("%x", *instrRepresentation);
+        }
+    } while( lRet != DONE );
+    
     return 0;
 }

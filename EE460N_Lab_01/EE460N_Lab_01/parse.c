@@ -14,7 +14,52 @@ enum
 };
 
 int isOpcode (char* op) {
-    return 1;
+    if (!strcmp(op, "add")) {
+        return 1;
+    } else if (!strcmp(op, "and")) {
+        return 1;
+    } else if (!strcmp(op, "brn")) {
+        return 1;
+    } else if (!strcmp(op, "brp")) {
+        return 1;
+    } else if (!strcmp(op, "brnp")) {
+        return 1;
+    } else if (!strcmp(op, "br")) {
+        return 1;
+    } else if (!strcmp(op, "brz")) {
+        return 1;
+    } else if (!strcmp(op, "brnz")) {
+        return 1;
+    } else if (!strcmp(op, "brzp")) {
+        return 1;
+    } else if (!strcmp(op, "brnzp")) {
+        return 1;
+    } else if (!strcmp(op, "jmp")) {
+        return 1;
+    } else if (!strcmp(op, "jsr")) {
+        return 1;
+    } else if (!strcmp(op, "jsrr")) {
+        return 1;
+    } else if (!strcmp(op, "ldb")) {
+        return 1;
+    } else if (!strcmp(op, "ldw")) {
+        return 1;
+    } else if (!strcmp(op, "lea")) {
+        return 1;
+    } else if (!strcmp(op, "rti")) {
+        return 1;
+    } else if (!strcmp(op, "shf")) {
+        return 1;
+    } else if (!strcmp(op, "stb")) {
+        return 1;
+    } else if (!strcmp(op, "stw")) {
+        return 1;
+    } else if (!strcmp(op, "trap")) {
+        return 1;
+    } else if (!strcmp(op, "xor")) {
+        return 1;
+    }
+    return -1;
 }
 
 int toNum( char * pStr ) {

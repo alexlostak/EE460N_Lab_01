@@ -15,13 +15,16 @@
 //lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4
 typedef struct instr {
     char* label;
-    uint16_t opcode;
+    char* opcode;
     char* arg1;
     char* arg2;
     char* arg3;
     char* arg4;
 } instr_t;
 
+typedef struct instr_general{
+    uint16_t imm5 : 16;
+} instr_general_t;
 
 typedef struct instr_add_imm {
     uint16_t imm5 : 5;
@@ -39,6 +42,9 @@ typedef struct instr_add_sr {
     uint16_t DR1 : 3;
     uint16_t opcode : 4;
 } instr_add_sr_t;
+
+instr_t* instr_new (char* lLabel, char* lOpcode, char* lArg1, char* lArg2, char* lArg3, char* lArg4);
+instr_general_t* repInstruction(instr_t* i);
 
 /*
  Determine op code type
