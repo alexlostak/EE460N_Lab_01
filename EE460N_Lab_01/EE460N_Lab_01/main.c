@@ -75,9 +75,9 @@ int main(int argc, const char * argv[]) {
     {
         lRet = readAndParse( lInfile, lLine, &lLabel,
                             &lOpcode, &lArg1, &lArg2, &lArg3, &lArg4 );
+
         if( lRet != DONE && lRet != EMPTY_LINE )
         {
-            
             currentInstruction = instr_new(lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4);
             
             instrRepresentation = repInstruction(currentInstruction);
