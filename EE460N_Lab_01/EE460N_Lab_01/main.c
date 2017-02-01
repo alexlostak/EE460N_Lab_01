@@ -96,17 +96,17 @@ int main(int argc, const char * argv[]) {
     {
         lRet = readAndParse( lInfile, lLine, &lLabel,
                             &lOpcode, &lArg1, &lArg2, &lArg3, &lArg4 );
-        printf("\nafter read and parse\n");
+        //printf("\nafter read and parse\n");
         if( lRet != DONE && lRet != EMPTY_LINE )
         {
-            printf("start of if loop\n");
+            //printf("start of if loop\n");
             currentInstruction = instr_new(lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4);
             
             instrRepresentation = repInstruction(currentInstruction);
             /*
            writeToFile(instrRepresentation);
              */
-            printf("\n%x\n", *instrRepresentation); //segmentation fault here
+            printf("%x\n", *instrRepresentation); //segmentation fault here
             
         }
     } while( lRet != DONE );

@@ -46,7 +46,9 @@ int isOpcode (char* op) {
         return 1;
     } else if (!strcmp(op, "lea")) {
         return 1;
-    } else if (!strcmp(op, "rti")) {
+    } else if (!strcmp(op, "not")) {
+        return 1;
+    }else if (!strcmp(op, "rti")) {
         return 1;
     } else if (!strcmp(op, "shf")) {
         return 1;

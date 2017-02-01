@@ -1,4 +1,6 @@
 ;This program counts from 10 to 0
 .ORIG x3000
+ADD R1, R2, R3
 ADD R1, R2, #5
+NOT R1, R4
 .END

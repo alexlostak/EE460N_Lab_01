@@ -30,6 +30,7 @@ instr_t* instr_new (char* lLabel, char* lOpcode, char* lArg1, char* lArg2, char*
 }
 
 
+
 instr_add_imm_t* instr_add_imm_t_new (instr_t* instr) {
     //convert args to numbers
     //assign numbers to fields in add struct
@@ -46,17 +47,46 @@ instr_add_imm_t* instr_add_imm_t_new (instr_t* instr) {
     arg2 = reg_to_uint16_t(instr->arg2);
     imm5 = toNum(instr->arg3);
     i = malloc(sizeof(instr_add_imm_t));
-    i->opcode = 1;
-    i->A = 1;
-    i->imm5 = imm5;
+    i->opcode = 1; //ADD OPCODE
     i->DR1 = arg1;
     i->SR1 = arg2;
+    i->A = 1;
+    i->imm5 = imm5;
     return i;
 }
 
-instr_add_sr_t* instr_add_sr_t_new(void) {
-    return NULL;
+instr_add_sr_t* instr_add_sr_t_new(instr_t* instr) {
+    uint16_t arg1;
+    uint16_t arg2;
+    uint16_t arg3;
+    instr_add_sr_t* i;
+    arg1 = reg_to_uint16_t(instr->arg1);
+    arg2 = reg_to_uint16_t(instr->arg2);
+    arg3 = reg_to_uint16_t(instr->arg3);
+    i = malloc(sizeof(instr_add_sr_t));
+    i->opcode = 1;
+    i->DR1 = arg1;
+    i->SR1 = arg2;
+    i->A = 0;
+    i->opspec = 0;
+    i->SR2 = arg3;
+    return i;
 };
+
+instr_not_t* instr_not_new_t(instr_t* instr) {
+    uint16_t arg1;
+    uint16_t arg2;
+    instr_not_t* i;
+    arg1 = reg_to_uint16_t(instr->arg1);
+    arg2 = reg_to_uint16_t(instr->arg2);
+    i = malloc(sizeof(instr_not_t));
+    i->opcode = 9;
+    i->DR1 = arg1;
+    i->SR1 = arg2;
+    i->A = 1;
+    i->opspec = 9;
+    return i;
+}
 
 instr_orig_t* instr_orig_t_new (instr_t* instr) {
     instr_orig_t* i;
@@ -65,11 +95,33 @@ instr_orig_t* instr_orig_t_new (instr_t* instr) {
     return i;
 }
 
+
+int determine_add(char* final_arg) {
+    if (final_arg[0] == 35) {
+        return 1;
+    }
+    return 0;
+}
+
+instr_general_t* instruction_add(instr_t* instr) {
+    if (determine_add(instr->arg3)) {
+        return instr_add_imm_t_new(instr);
+    }
+    return instr_add_sr_t_new(instr);
+}
+
+instr_general_t* instruction_not(instr_t* instr) {
+    return instr_not_new_t(instr);
+}
+
+
 instr_general_t* repInstruction(instr_t* instr) {
     if (!strcmp(instr->opcode, "add")) {
-        return instr_add_imm_t_new(instr);
+        return instruction_add(instr);
     } else if (!strcmp(instr->opcode, ".orig")) {
         return instr_orig_t_new(instr);
+    } else if (!strcmp(instr->opcode, "not")) {
+        return instruction_not(instr);
     }
     
         /*

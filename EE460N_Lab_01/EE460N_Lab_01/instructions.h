@@ -43,6 +43,14 @@ typedef struct instr_add_sr {
     uint16_t opcode : 4;
 } instr_add_sr_t;
 
+typedef struct instr_not {
+    uint16_t opspec : 5;
+    uint16_t A : 1;
+    uint16_t SR1 : 3;
+    uint16_t DR1 : 3;
+    uint16_t opcode : 4;
+} instr_not_t;
+
 typedef struct instr_orig {
     uint16_t address : 16;
 } instr_orig_t;
