@@ -9,4 +9,6 @@ this ADD R5, R2, #9
 ADD R1, R2, R3
 ADD R1, R2, #5
 NOT R1, R4
+JMP R1
+RET
 .END

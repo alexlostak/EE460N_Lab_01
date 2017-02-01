@@ -90,6 +90,18 @@ instr_add_sr_t* instr_add_sr_t_new(instr_t* instr) {
     return i;
 };
 
+instr_jmp_t* instr_jmp_t_new(instr_t* instr) {
+    uint16_t arg1;
+    instr_jmp_t* i;
+    arg1 = reg_to_uint16_t(instr->arg1);
+    i = malloc(sizeof(instr_jmp_t));
+    i->opcode = 12;
+    i->DR1 = 0;
+    i->baseR = arg1;
+    i->opspec = 0;
+    return i;
+}
+
 instr_not_t* instr_not_t_new(instr_t* instr) {
     uint16_t arg1;
     uint16_t arg2;
@@ -143,6 +155,10 @@ instr_general_t* instruction_add(instr_t* instr) {
     return instr_add_sr_t_new(instr);
 }
 
+instr_jmp_t* instruction_jmp(instr_t* instr) {
+    return instr_jmp_t_new(instr);
+}
+
 instr_lea_t* instruction_lea(instr_t* instr) {
     return instr_lea_t_new(instr);
 }
@@ -161,10 +177,14 @@ instr_general_t* repInstruction(instr_t* instr) {
         return instruction_add(instr);
     } else if (!strcmp(instr->opcode, ".orig")) {
         return instr_orig_t_new(instr);
+    }  else if (!strcmp(instr->opcode, "jmp")) {
+        return instruction_jmp(instr);
     } else if (!strcmp(instr->opcode, "lea")) {
         return instruction_lea(instr);
     } else if (!strcmp(instr->opcode, "not")) {
         return instruction_not(instr);
+    } else if (!strcmp(instr->opcode, "ret")) {
+        return instruction_ret(instr);
     }
     
         /*

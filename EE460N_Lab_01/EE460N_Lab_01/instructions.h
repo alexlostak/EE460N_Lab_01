@@ -51,6 +51,13 @@ typedef struct instr_add_sr {
     uint16_t opcode : 4;
 } instr_add_sr_t;
 
+typedef struct instr_jmp {
+    uint16_t opspec : 6;
+    uint16_t baseR : 3;
+    uint16_t DR1 : 3;
+    uint16_t opcode : 4;
+} instr_jmp_t;
+
 typedef struct instr_not {
     uint16_t opspec : 5;
     uint16_t A : 1;
