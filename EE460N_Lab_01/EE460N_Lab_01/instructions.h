@@ -43,6 +43,10 @@ typedef struct instr_add_sr {
     uint16_t opcode : 4;
 } instr_add_sr_t;
 
+typedef struct instr_orig {
+    uint16_t address : 16;
+} instr_orig_t;
+
 instr_t* instr_new (char* lLabel, char* lOpcode, char* lArg1, char* lArg2, char* lArg3, char* lArg4);
 instr_general_t* repInstruction(instr_t* i);
 

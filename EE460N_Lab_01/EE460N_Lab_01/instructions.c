@@ -19,7 +19,7 @@ uint16_t reg_to_uint16_t (char* reg) {
 }
 
 instr_t* instr_new (char* lLabel, char* lOpcode, char* lArg1, char* lArg2, char* lArg3, char* lArg4) {
-    printf("entered instr_new");
+    printf("entered instr_new\n");
     instr_t* i = malloc(sizeof(instr_t));
     i->label = lLabel;
     i->opcode = lOpcode;
@@ -27,13 +27,13 @@ instr_t* instr_new (char* lLabel, char* lOpcode, char* lArg1, char* lArg2, char*
     i->arg2 = lArg2;
     i->arg3 = lArg3;
     i->arg4 = lArg4;
-    printf("leaving instr_new");
+    printf("leaving instr_new\n");
     return i;
 }
 
 
 instr_add_imm_t* instr_add_imm_t_new (instr_t* instr) {
-    printf("entered instr_add");
+    printf("entered instr_add\n");
     //convert args to numbers
     //assign numbers to fields in add struct
     //ADD R1, R1, #5
@@ -54,21 +54,28 @@ instr_add_imm_t* instr_add_imm_t_new (instr_t* instr) {
     i->imm5 = imm5;
     i->DR1 = arg1;
     i->SR1 = arg2;
-    printf("leaving instr_add");
+    printf("leaving instr_add\n");
     return i;
 }
 
+instr_orig_t* instr_orig_t_new (instr_t* instr) {
+    instr_orig_t* i;
+    i = malloc(sizeof(instr_orig_t));
+    i->address = toNum(instr->arg1);
+    return i;
+}
 
 instr_general_t* repInstruction(instr_t* instr) {
-    printf("entered repInstruction");
+    printf("entered repInstruction\n");
     if (!strcmp(instr->opcode, "add")) {
         return instr_add_imm_t_new(instr);
+    } else if (!strcmp(instr->opcode, ".orig")) {
+        return instr_orig_t_new(instr);
     }
-    printf("leaving repInstruction");
-    return NULL;
+    printf("leaving repInstruction\n");
+    
         /*
-    } else if (!strcmp(op, "and")) {
-        return 1;
+    
     } else if (!strcmp(op, "brn")) {
         return 1;
     } else if (!strcmp(op, "brp")) {
@@ -111,6 +118,7 @@ instr_general_t* repInstruction(instr_t* instr) {
         return 1;
     }
     */
+    return NULL;
 }
 
 

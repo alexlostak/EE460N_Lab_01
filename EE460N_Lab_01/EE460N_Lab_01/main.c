@@ -64,14 +64,14 @@ int main(int argc, const char * argv[]) {
             if (!strcmp(lOpcode, ".orig")) {
                 address = toNum(lArg1);
             }
-            /*
-            if (strcmp(lLabel,"")) {  /* If there is a label
+            
+            if (strcmp(lLabel,"")) {  /* If there is a label*/
                 symbolTable[j].symbol = malloc(strlen(lLabel) + 1);
                 strcpy(symbolTable[j].symbol, lLabel);
                 symbolTable[j].address = address;
                 j++;
             }
-             */
+             
             printf("%x - %s %s %s %s %s %s \n", address, lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4);
             i++;
             address += 2;
@@ -79,25 +79,35 @@ int main(int argc, const char * argv[]) {
     } while( lRet != DONE );
     
     printf("\nSymbol Table\n");
-    /*for (i = 0; i < j; i++) {
+    for (i = 0; i < j; i++) {
         printf("%s - %x\n", symbolTable[i].symbol, symbolTable[i].address);
     }
     printf("entering second pass");
-     */
-    printf("\nSymbol Table\n");
-    rewind(lInfile);
-    printf("\nSymbol Table\n");
+    
+    
+    
+    //rewind(lInfile);
+    fclose(lInfile);
+    lInfile = fopen( "data.in", "r" );
+    
+    
+    printf("\nafter file reopen\n");
     do
     {
         lRet = readAndParse( lInfile, lLine, &lLabel,
                             &lOpcode, &lArg1, &lArg2, &lArg3, &lArg4 );
+        printf("\nafter read and parse\n");
         if( lRet != DONE && lRet != EMPTY_LINE )
         {
-            printf("entering instr_new");
+            printf("start of if loop\n");
             currentInstruction = instr_new(lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4);
+            
             instrRepresentation = repInstruction(currentInstruction);
-        /*   writeToFile(instrRepresentation); */
-            printf("%x", *instrRepresentation);
+            /*
+           writeToFile(instrRepresentation);
+             */
+            printf("\n%x\n", *instrRepresentation); //segmentation fault here
+            
         }
     } while( lRet != DONE );
     
