@@ -49,7 +49,7 @@ instr_add_imm_t* instr_add_imm_t_new (instr_t* instr) {
     arg2 = reg_to_uint16_t(instr->arg2);
     imm5 = toNum(instr->arg3);
     i = malloc(sizeof(instr_add_imm_t));
-   // i->opcode = instr->opcode; //convert
+    i->opcode = 1;
     i->A = 1;
     i->imm5 = imm5;
     i->DR1 = arg1;
