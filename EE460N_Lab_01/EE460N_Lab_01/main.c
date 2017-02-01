@@ -22,14 +22,14 @@ enum
 	   DONE, OK, EMPTY_LINE
 };
 char lLine[MAX_LINE_LENGTH + 1], *lLabel, *lOpcode, *lArg1,
-*lArg2, *lArg3, *lArg4;
+*lArg2, *lArg3, *lArg4, *inputFile, *outputFile;
 int j = 0;
 FILE *output, *lInfile;
 
 void parseLoop(void (*doWorkOnFile)() ) {
     int lRet;
-    lInfile = fopen( "data.in", "r" );	/* open the input file */
-    output = fopen( "data.out", "w" );
+    lInfile = fopen( inputFile, "r" );
+    output = fopen( outputFile, "w" );
     do
     {
         lRet = readAndParse( lInfile, lLine, &lLabel,
@@ -69,17 +69,33 @@ void assemble() {
     address+=2;
 }
 
-int main(int argc, const char * argv[]) {
-    int i = 0;
-    symbolTable = malloc(sizeof(SymbolTable_t) * 100);
-    
-    parseLoop(createSymbolTable);
-    
+void setInputOutput(int argc, const char * argv[]) {
+    if (argc > 1) {
+        inputFile = (char*) argv[1];
+        outputFile = (char*) argv[2];
+        printf("input = %s and output = %s\n", inputFile, outputFile);
+    } else {
+        inputFile = malloc(strlen("data.in") + 1);
+        outputFile = malloc(strlen("data.out") + 1);
+        strcpy(inputFile, "data.in");
+        strcpy(outputFile, "data.out");
+    }
+}
+
+void printSymbolTable() {
     printf("\nSymbol Table\n");
+    int i = 0;
     for (i = 0; i < numOfLabels; i++) {
         printf("%s - %x\n", symbolTable[i].symbol, symbolTable[i].address);
     } printf("\n\n");
+}
+
+int main(int argc, const char * argv[]) {
+    symbolTable = malloc(sizeof(SymbolTable_t) * 100);
+    setInputOutput(argc, argv);
     
+    parseLoop(createSymbolTable);
+    printSymbolTable();
     parseLoop(assemble);
     
     return 0;

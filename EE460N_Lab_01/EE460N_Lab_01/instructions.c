@@ -265,6 +265,13 @@ instr_xor_imm_t* instr_xor_imm_t_new (instr_t* instr) {
     return i;
 }
 
+instr_fill_t* instr_fill_t_new (instr_t* instr) {
+    instr_fill_t* i;
+    i = malloc(sizeof(instr_general_t));
+    i->number = toNum(instr->arg1);
+    return i;
+}
+
 instr_general_t* instr_xor_new (instr_t* instr) {
     if (isSourceARegister(instr->arg1)) {
         return instr_xor_sr_t_new(instr);
@@ -326,6 +333,8 @@ instr_general_t* repInstruction(instr_t* instr) {
         return instr_rti_t_new(instr);
     } else if (!strcmp(instr->opcode, "xor")) {
         return instr_xor_new(instr);
+    } else if (!strcmp(instr->opcode, ".fill")) {
+        return instr_fill_t_new(instr);
     } else if (!strcmp(instr->opcode, ".end")) {
          exit(1);               /* What do we do here? */
     } else {
