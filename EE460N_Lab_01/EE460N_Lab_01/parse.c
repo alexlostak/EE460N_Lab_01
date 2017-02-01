@@ -52,7 +52,11 @@ int isOpcode (char* op) {
         return 1;
     } else if (!strcmp(op, "rti")) {
         return 1;
-    } else if (!strcmp(op, "shf")) {
+    } else if (!strcmp(op, "lshf")) {
+        return 1;
+    } else if (!strcmp(op, "rshfl")) {
+        return 1;
+    } else if (!strcmp(op, "rshfa")) {
         return 1;
     } else if (!strcmp(op, "stb")) {
         return 1;

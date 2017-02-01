@@ -27,6 +27,13 @@ int determine_add(char* final_arg) {
     return 0;
 }
 
+int isSourceARegister(char* final_arg) {
+    if (final_arg[0] == 35) {
+        return 1;
+    }
+    return 0;
+}
+
 uint16_t calcOffset(char* label) {
     int i;
     int offset;
@@ -52,7 +59,6 @@ instr_t* instr_new (char* lLabel, char* lOpcode, char* lArg1, char* lArg2, char*
     i->arg4 = lArg4;
     return i;
 }
-
 
 
 instr_add_imm_t* instr_add_imm_t_new (instr_t* instr) {
@@ -135,8 +141,6 @@ instr_orig_t* instr_orig_t_new (instr_t* instr) {
     return i;
 }
 
-
-
 instr_lea_t* instr_lea_t_new (instr_t* instr) {
     uint16_t offset;
     instr_lea_t* i;
@@ -146,6 +150,127 @@ instr_lea_t* instr_lea_t_new (instr_t* instr) {
     offset = calcOffset(instr->arg2);
     i->offset = offset;
     return i;
+}
+
+instr_and_imm_t* instr_and_imm_t_new (instr_t* instr) {
+    instr_and_imm_t* i;
+    i = malloc(sizeof(instr_general_t));
+    i->opcode = 5;
+    i->DR1 = reg_to_uint16_t(instr->arg1);
+    i->SR1 = reg_to_uint16_t(instr->arg2);
+    i->one = 1;
+    i->imm5 = toNum(instr->arg3);
+    return i;
+}
+
+instr_and_sr_t* instr_and_sr_t_new (instr_t* instr) {
+    instr_and_sr_t* i;
+    i = malloc(sizeof(instr_general_t));
+    i->opcode = 5;
+    i->DR1 = reg_to_uint16_t(instr->arg1);
+    i->SR1 = reg_to_uint16_t(instr->arg2);
+    i->zeros = 0;
+    i->SR2 = reg_to_uint16_t(instr->arg3);
+    return i;
+}
+
+instr_general_t* instr_and_new (instr_t* instr) {
+    if (isSourceARegister(instr->arg3)) {
+        return instr_and_sr_t_new(instr);
+    } else {
+        return instr_and_imm_t_new(instr);
+    }
+}
+
+instr_jsr_t* instr_jsr_t_new (instr_t* instr) {
+    instr_jsr_t* i;
+    i = malloc(sizeof(instr_general_t));
+    i->opcode = 0100;
+    i->steering = 1;
+    i->offset = calcOffset(instr->arg1);
+    return i;
+}
+
+instr_jsrr_t* instr_jsrr_t_new (instr_t* instr) {
+    instr_jsrr_t* i;
+    i = malloc(sizeof(instr_general_t));
+    i->opcode = 0100;
+    i->steering = 0;
+    i->zeros = 0;
+    i->baseReg = reg_to_uint16_t(instr->arg1);
+    i->zeros2 = 0;
+    return i;
+}
+
+instr_rti_t* instr_rti_t_new (instr_t* instr) {
+    instr_rti_t* i;
+    i = malloc(sizeof(instr_general_t));
+    i->opcode = 8;
+    i->zeros = 0;
+    return i;
+}
+
+instr_lshf_t* instr_lshf_t_new (instr_t* instr) {
+    instr_lshf_t* i;
+    i = malloc(sizeof(instr_general_t));
+    i->opcode = 13;
+    i->DR = reg_to_uint16_t(instr->arg1);
+    i->SR = reg_to_uint16_t(instr->arg2);
+    i->zeros = 0;
+    i->amount = toNum(instr->arg3);
+    return i;
+}
+
+instr_rshfl_t* instr_rshfl_t_new (instr_t* instr) {
+    instr_rshfl_t* i;
+    i = malloc(sizeof(instr_general_t));
+    i->opcode = 13;
+    i->DR = reg_to_uint16_t(instr->arg1);
+    i->SR = reg_to_uint16_t(instr->arg2);
+    i->zeros = 1;
+    i->amount = toNum(instr->arg3);
+    return i;
+}
+
+instr_rshfa_t* instr_rshfa_t_new (instr_t* instr) {
+    instr_rshfa_t* i;
+    i = malloc(sizeof(instr_general_t));
+    i->opcode = 13;
+    i->DR = reg_to_uint16_t(instr->arg1);
+    i->SR = reg_to_uint16_t(instr->arg2);
+    i->zeros = 3;
+    i->amount = toNum(instr->arg3);
+    return i;
+}
+
+instr_xor_sr_t* instr_xor_sr_t_new (instr_t* instr) {
+    instr_xor_sr_t* i;
+    i = malloc(sizeof(instr_general_t));
+    i->opcode = 9;
+    i->DR = reg_to_uint16_t(instr->arg1);
+    i->SR1 = reg_to_uint16_t(instr->arg2);
+    i->zeros = 0;
+    i->SR2 = reg_to_uint16_t(instr->arg3);
+    return i;
+}
+
+instr_xor_imm_t* instr_xor_imm_t_new (instr_t* instr) {
+    instr_xor_imm_t* i;
+    i = malloc(sizeof(instr_general_t));
+    i->opcode = 9;
+    i->DR = reg_to_uint16_t(instr->arg1);
+    i->SR = reg_to_uint16_t(instr->arg2);
+    i->one = 1;
+    i->imm5 = toNum(instr->arg3);
+    return i;
+}
+
+instr_general_t* instr_xor_new (instr_t* instr) {
+    if (isSourceARegister(instr->arg1)) {
+        return instr_xor_sr_t_new(instr);
+    } else {
+        return instr_xor_imm_t_new(instr);
+    }
 }
 
 instr_general_t* instruction_add(instr_t* instr) {
@@ -185,53 +310,27 @@ instr_general_t* repInstruction(instr_t* instr) {
         return instruction_not(instr);
     } else if (!strcmp(instr->opcode, "ret")) {
         return instruction_ret(instr);
+    } else if (!strcmp(instr->opcode, "lshf")) {
+        return instr_lshf_t_new(instr);
+    } else if (!strcmp(instr->opcode, "rshfl")) {
+        return instr_rshfl_t_new(instr);
+    } else if (!strcmp(instr->opcode, "rshfa")) {
+        return instr_rshfa_t_new(instr);
+    } else if (!strcmp(instr->opcode, "and")) {
+        return instr_and_new(instr);
+    } else if (!strcmp(instr->opcode, "jsr")) {
+        return instr_jsr_t_new(instr);
+    } else if (!strcmp(instr->opcode, "jsrr")) {
+        return instr_jsrr_t_new(instr);
+    } else if (!strcmp(instr->opcode, "rti")) {
+        return instr_rti_t_new(instr);
+    } else if (!strcmp(instr->opcode, "xor")) {
+        return instr_xor_new(instr);
+    } else if (!strcmp(instr->opcode, ".end")) {
+         exit(1);               /* What do we do here? */
+    } else {
+        return NULL;
     }
-    
-        /*
-    
-    } else if (!strcmp(op, "brn")) {
-        return 1;
-    } else if (!strcmp(op, "brp")) {
-        return 1;
-    } else if (!strcmp(op, "brnp")) {
-        return 1;
-    } else if (!strcmp(op, "br")) {
-        return 1;
-    } else if (!strcmp(op, "brz")) {
-        return 1;
-    } else if (!strcmp(op, "brnz")) {
-        return 1;
-    } else if (!strcmp(op, "brzp")) {
-        return 1;
-    } else if (!strcmp(op, "brnzp")) {
-        return 1;
-    } else if (!strcmp(op, "jmp")) {
-        return 1;
-    } else if (!strcmp(op, "jsr")) {
-        return 1;
-    } else if (!strcmp(op, "jsrr")) {
-        return 1;
-    } else if (!strcmp(op, "ldb")) {
-        return 1;
-    } else if (!strcmp(op, "ldw")) {
-        return 1;
-    } else if (!strcmp(op, "lea")) {
-        return 1;
-    } else if (!strcmp(op, "rti")) {
-        return 1;
-    } else if (!strcmp(op, "shf")) {
-        return 1;
-    } else if (!strcmp(op, "stb")) {
-        return 1;
-    } else if (!strcmp(op, "stw")) {
-        return 1;
-    } else if (!strcmp(op, "trap")) {
-        return 1;
-    } else if (!strcmp(op, "xor")) {
-        return 1;
-    }
-    */
-    return NULL;
 }
 
 

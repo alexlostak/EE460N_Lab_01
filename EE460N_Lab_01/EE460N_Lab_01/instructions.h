@@ -53,7 +53,7 @@ typedef struct instr_add_sr {
 
 typedef struct instr_and_imm {
     uint16_t imm5 : 5;
-    uint16_t A : 1;
+    uint16_t one : 1;
     uint16_t SR1 : 3;
     uint16_t DR1 : 3;
     uint16_t opcode : 4;
@@ -61,8 +61,7 @@ typedef struct instr_and_imm {
 
 typedef struct instr_and_sr {
     uint16_t SR2 : 3;
-    uint16_t zeros : 2;
-    uint16_t A : 1;
+    uint16_t zeros : 3;
     uint16_t SR1 : 3;
     uint16_t DR1 : 3;
     uint16_t opcode : 4;
@@ -126,7 +125,6 @@ typedef struct instr_xor_imm {
     uint16_t DR : 3;
     uint16_t opcode : 4;
 } instr_xor_imm_t;
-
 
 typedef struct instr_jmp {
     uint16_t opspec : 6;
