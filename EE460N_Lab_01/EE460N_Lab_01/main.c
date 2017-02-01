@@ -26,12 +26,6 @@ char lLine[MAX_LINE_LENGTH + 1], *lLabel, *lOpcode, *lArg1,
 int j = 0;
 FILE *output, *lInfile;
 
-void writeToFile(instr_general_t* instruction) {
-
-
-    fprintf(output, "0x%.4X\n", *instruction);
-}
-
 void parseLoop(void (*doWorkOnFile)() ) {
     int lRet;
     lInfile = fopen( "data.in", "r" );	/* open the input file */
@@ -70,7 +64,6 @@ void assemble() {
     
     currentInstruction = instr_new(lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4);
     instrRepresentation = repInstruction(currentInstruction);
-     //writeToFile(instrRepresentation);
     fprintf(output, "0x%.4X\n", *instrRepresentation);
     printf("x%x - %x\n", address, *instrRepresentation);
     address+=2;
