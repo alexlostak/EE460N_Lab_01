@@ -51,6 +51,83 @@ typedef struct instr_add_sr {
     uint16_t opcode : 4;
 } instr_add_sr_t;
 
+typedef struct instr_and_imm {
+    uint16_t imm5 : 5;
+    uint16_t A : 1;
+    uint16_t SR1 : 3;
+    uint16_t DR1 : 3;
+    uint16_t opcode : 4;
+} instr_and_imm_t;
+
+typedef struct instr_and_sr {
+    uint16_t SR2 : 3;
+    uint16_t zeros : 2;
+    uint16_t A : 1;
+    uint16_t SR1 : 3;
+    uint16_t DR1 : 3;
+    uint16_t opcode : 4;
+} instr_and_sr_t;
+
+typedef struct instr_jsr {
+    uint16_t offset : 11;
+    uint16_t steering : 1;
+    uint16_t opcode : 4;
+} instr_jsr_t;
+
+typedef struct instr_jsrr {
+    uint16_t zeros2 : 6;
+    uint16_t baseReg : 3;
+    uint16_t zeros : 2;
+    uint16_t steering : 1;
+    uint16_t opcode : 4;
+} instr_jsrr_t;
+
+typedef struct instr_rti {
+    uint16_t zeros : 12;
+    uint16_t opcode : 4;
+} instr_rti_t;
+
+typedef struct instr_lshf {
+    uint16_t amount : 4;
+    uint16_t zeros : 2;
+    uint16_t SR : 3;
+    uint16_t DR : 3;
+    uint16_t opcode : 4;
+} instr_lshf_t;
+
+typedef struct instr_rshfl {
+    uint16_t amount : 4;
+    uint16_t zeros : 2;
+    uint16_t SR : 3;
+    uint16_t DR : 3;
+    uint16_t opcode : 4;
+} instr_rshfl_t;
+
+typedef struct instr_rshfa {
+    uint16_t amount : 4;
+    uint16_t zeros : 2;
+    uint16_t SR : 3;
+    uint16_t DR : 3;
+    uint16_t opcode : 4;
+} instr_rshfa_t;
+
+typedef struct instr_xor_sr {
+    uint16_t SR2 : 3;
+    uint16_t zeros : 3;
+    uint16_t SR1 : 3;
+    uint16_t DR : 3;
+    uint16_t opcode : 4;
+} instr_xor_sr_t;
+
+typedef struct instr_xor_imm {
+    uint16_t imm5 : 5;
+    uint16_t one : 1;
+    uint16_t SR : 3;
+    uint16_t DR : 3;
+    uint16_t opcode : 4;
+} instr_xor_imm_t;
+
+
 typedef struct instr_jmp {
     uint16_t opspec : 6;
     uint16_t baseR : 3;
