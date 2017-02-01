@@ -24,11 +24,18 @@ enum
 char lLine[MAX_LINE_LENGTH + 1], *lLabel, *lOpcode, *lArg1,
 *lArg2, *lArg3, *lArg4;
 int j = 0;
+FILE *output, *lInfile;
+
+void writeToFile(instr_general_t* instruction) {
+
+
+    fprintf(output, "0x%.4X\n", *instruction);
+}
 
 void parseLoop(void (*doWorkOnFile)() ) {
     int lRet;
-    FILE * lInfile;
     lInfile = fopen( "data.in", "r" );	/* open the input file */
+    output = fopen( "data.out", "w" );
     do
     {
         lRet = readAndParse( lInfile, lLine, &lLabel,
@@ -38,6 +45,7 @@ void parseLoop(void (*doWorkOnFile)() ) {
         }
     } while( lRet != DONE );
     fclose(lInfile);
+    fclose(output);
 }
 
 void createSymbolTable() {
@@ -62,11 +70,9 @@ void assemble() {
     
     currentInstruction = instr_new(lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4);
     instrRepresentation = repInstruction(currentInstruction);
-    /*
-     writeToFile(instrRepresentation);
-     */
-    printf("x%x - ", address);
-    printf("%x\n", *instrRepresentation);
+     //writeToFile(instrRepresentation);
+    fprintf(output, "0x%.4X\n", *instrRepresentation);
+    printf("x%x - %x\n", address, *instrRepresentation);
     address+=2;
 }
 
