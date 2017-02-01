@@ -20,6 +20,28 @@ uint16_t reg_to_uint16_t (char* reg) {
     return char_value;
 }
 
+int determine_add(char* final_arg) {
+    if (final_arg[0] == 35) {
+        return 1;
+    }
+    return 0;
+}
+
+uint16_t calcOffset(char* label) {
+    int i;
+    int offset;
+    int labelAddress;
+    for (i = 0; i < numOfLabels; i++) {
+        if (!strcmp(label,symbolTable[i].symbol)) {
+            labelAddress = symbolTable[i].address;
+            break;
+        }
+    }
+    offset = (labelAddress - (address + 2)) / 2;
+    printf("offset = (%x - (%x + 2)) / 2 = %d\n", labelAddress, address, offset);
+    return offset;
+}
+
 instr_t* instr_new (char* lLabel, char* lOpcode, char* lArg1, char* lArg2, char* lArg3, char* lArg4) {
     instr_t* i = malloc(sizeof(instr_t));
     i->label = lLabel;
@@ -34,15 +56,8 @@ instr_t* instr_new (char* lLabel, char* lOpcode, char* lArg1, char* lArg2, char*
 
 
 instr_add_imm_t* instr_add_imm_t_new (instr_t* instr) {
-    //convert args to numbers
-    //assign numbers to fields in add struct
-    //ADD R1, R1, #5
-    //convert arg1
-    //variable declaration
     uint16_t arg1;
-    //convert arg2
     uint16_t arg2;
-    //convert imm5
     uint16_t imm5;
     instr_add_imm_t* i;
     arg1 = reg_to_uint16_t(instr->arg1);
@@ -75,7 +90,7 @@ instr_add_sr_t* instr_add_sr_t_new(instr_t* instr) {
     return i;
 };
 
-instr_not_t* instr_not_new_t(instr_t* instr) {
+instr_not_t* instr_not_t_new(instr_t* instr) {
     uint16_t arg1;
     uint16_t arg2;
     instr_not_t* i;
@@ -90,6 +105,16 @@ instr_not_t* instr_not_new_t(instr_t* instr) {
     return i;
 }
 
+instr_ret_t* instr_ret_t_new(instr_t* instr) {
+    instr_ret_t* i;
+    i = malloc(sizeof(instr_ret_t));
+    i->opcode =12;
+    i->DR1 = 0;
+    i->SR1 = 7;
+    i->opspec = 0;
+    return i;
+}
+
 instr_orig_t* instr_orig_t_new (instr_t* instr) {
     instr_orig_t* i;
     i = malloc(sizeof(instr_orig_t));
@@ -98,20 +123,7 @@ instr_orig_t* instr_orig_t_new (instr_t* instr) {
     return i;
 }
 
-uint16_t calcOffset(char* label) {
-    int i;
-    int offset;
-    int labelAddress;
-    for (i = 0; i < numOfLabels; i++) {
-        if (!strcmp(label,symbolTable[i].symbol)) {
-            labelAddress = symbolTable[i].address;
-            break;
-        }
-    }
-    offset = (labelAddress - (address + 2)) / 2;
-    printf("offset = (%x - (%x + 2)) / 2 = %d\n", labelAddress, address, offset);
-    return offset;
-}
+
 
 instr_lea_t* instr_lea_t_new (instr_t* instr) {
     uint16_t offset;
@@ -124,14 +136,6 @@ instr_lea_t* instr_lea_t_new (instr_t* instr) {
     return i;
 }
 
-
-int determine_add(char* final_arg) {
-    if (final_arg[0] == 35) {
-        return 1;
-    }
-    return 0;
-}
-
 instr_general_t* instruction_add(instr_t* instr) {
     if (determine_add(instr->arg3)) {
         return instr_add_imm_t_new(instr);
@@ -139,8 +143,16 @@ instr_general_t* instruction_add(instr_t* instr) {
     return instr_add_sr_t_new(instr);
 }
 
+instr_lea_t* instruction_lea(instr_t* instr) {
+    return instr_lea_t_new(instr);
+}
+
 instr_general_t* instruction_not(instr_t* instr) {
-    return instr_not_new_t(instr);
+    return instr_not_t_new(instr);
+}
+
+instr_ret_t* instruction_ret(instr_t* instr) {
+    return instr_ret_t_new(instr);
 }
 
 
@@ -150,7 +162,7 @@ instr_general_t* repInstruction(instr_t* instr) {
     } else if (!strcmp(instr->opcode, ".orig")) {
         return instr_orig_t_new(instr);
     } else if (!strcmp(instr->opcode, "lea")) {
-        return instr_lea_t_new(instr);
+        return instruction_lea(instr);
     } else if (!strcmp(instr->opcode, "not")) {
         return instruction_not(instr);
     }
