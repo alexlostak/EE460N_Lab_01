@@ -21,74 +21,67 @@ enum
 {
 	   DONE, OK, EMPTY_LINE
 };
+char lLine[MAX_LINE_LENGTH + 1], *lLabel, *lOpcode, *lArg1,
+*lArg2, *lArg3, *lArg4;
+int j = 0;
 
-
-int main(int argc, const char * argv[]) {
-    
-    char lLine[MAX_LINE_LENGTH + 1], *lLabel, *lOpcode, *lArg1,
-    *lArg2, *lArg3, *lArg4;
-	   int lRet;
-    int i = 0;
-    int j = 0;
-    instr_general_t* instrRepresentation;
+void parseLoop(void (*doWorkOnFile)() ) {
+    int lRet;
     FILE * lInfile;
-    instr_t* currentInstruction;
-    
-    symbolTable = malloc(sizeof(SymbolTable_t) * 100);
-    
     lInfile = fopen( "data.in", "r" );	/* open the input file */
     do
     {
         lRet = readAndParse( lInfile, lLine, &lLabel,
                             &lOpcode, &lArg1, &lArg2, &lArg3, &lArg4 );
-        if( lRet != DONE && lRet != EMPTY_LINE )
-        {
-            if (!strcmp(lOpcode, ".orig")) {
-                address = toNum(lArg1);
-                originAddress = address;
-            }
-            
-            if (strcmp(lLabel,"")) {  /* If there is a label*/
-                symbolTable[j].symbol = malloc(strlen(lLabel) + 1);
-                strcpy(symbolTable[j].symbol, lLabel);
-                symbolTable[j].address = address;
-                j++;
-                numOfLabels++;
-            }
-             
-            printf("%x - %s %s %s %s %s %s \n", address, lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4);
-            address += 2;
+        if(lRet != DONE && lRet != EMPTY_LINE ) {
+            (*doWorkOnFile)();
         }
     } while( lRet != DONE );
+    fclose(lInfile);
+}
+
+void createSymbolTable() {
+    if (!strcmp(lOpcode, ".orig")) {
+        address = toNum(lArg1);
+        originAddress = address;
+    }
+    if (strcmp(lLabel,"")) {  /* If there is a label*/
+        symbolTable[j].symbol = malloc(strlen(lLabel) + 1);
+        strcpy(symbolTable[j].symbol, lLabel);
+        symbolTable[j].address = address;
+        j++;
+        numOfLabels++;
+    }
+    printf("%x - %s %s %s %s %s %s \n", address, lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4);
+    address += 2;
+}
+
+void assemble() {
+    instr_general_t* instrRepresentation;
+    instr_t* currentInstruction;
+    
+    currentInstruction = instr_new(lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4);
+    instrRepresentation = repInstruction(currentInstruction);
+    /*
+     writeToFile(instrRepresentation);
+     */
+    printf("x%x - ", address);
+    printf("%x\n", *instrRepresentation);
+    address+=2;
+}
+
+int main(int argc, const char * argv[]) {
+    int i = 0;
+    symbolTable = malloc(sizeof(SymbolTable_t) * 100);
+    
+    parseLoop(createSymbolTable);
     
     printf("\nSymbol Table\n");
-    for (i = 0; i < j; i++) {
+    for (i = 0; i < numOfLabels; i++) {
         printf("%s - %x\n", symbolTable[i].symbol, symbolTable[i].address);
-    }
+    } printf("\n\n");
     
-    
-    //rewind(lInfile);
-    fclose(lInfile);
-    lInfile = fopen( "data.in", "r" );
-    printf("\n\n");
-    do
-    {
-        lRet = readAndParse( lInfile, lLine, &lLabel,
-                            &lOpcode, &lArg1, &lArg2, &lArg3, &lArg4 );
-
-        if( lRet != DONE && lRet != EMPTY_LINE )
-        {
-            currentInstruction = instr_new(lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4);
-            
-            instrRepresentation = repInstruction(currentInstruction);
-            /*
-           writeToFile(instrRepresentation);
-             */
-            printf("x%x - ", address);
-            printf("%x\n", *instrRepresentation); //segmentation fault here
-            address+=2;
-        }
-    } while( lRet != DONE );
+    parseLoop(assemble);
     
     return 0;
 }
