@@ -9,8 +9,16 @@
 #ifndef instructions_h
 #define instructions_h
 
-#include <stdio.h>
+typedef struct symboltable {
+    char* symbol;
+    int address;
+} SymbolTable_t;
 
+#include <stdio.h>
+extern int address;
+extern int originAddress;
+extern int numOfLabels;
+extern SymbolTable_t* symbolTable;
 
 //lLabel, lOpcode, lArg1, lArg2, lArg3, lArg4
 typedef struct instr {
@@ -46,6 +54,12 @@ typedef struct instr_add_sr {
 typedef struct instr_orig {
     uint16_t address : 16;
 } instr_orig_t;
+
+typedef struct instr_lea {
+    uint16_t offset : 9;
+    uint16_t DR1 : 3;
+    uint16_t opcode : 4;
+} instr_lea_t;
 
 instr_t* instr_new (char* lLabel, char* lOpcode, char* lArg1, char* lArg2, char* lArg3, char* lArg4);
 instr_general_t* repInstruction(instr_t* i);

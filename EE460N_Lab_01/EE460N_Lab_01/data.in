@@ -1,4 +1,9 @@
 ;This program counts from 10 to 0
 .ORIG x3000
-ADD R1, R2, #5
+hello ADD R1, R2, #5
+lea R2, this
+ADD R2, R2, #6
+ADD R3, R2, #7
+ADD R4, R2, #8
+this ADD R5, R2, #9
 .END

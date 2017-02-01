@@ -9,8 +9,10 @@
 #include "instructions.h"
 #include "parse.h"
 
-
-
+int originAddress = 0;
+int address = 0;
+int numOfLabels = 0;
+SymbolTable_t* symbolTable;
 
 uint16_t reg_to_uint16_t (char* reg) {
     uint16_t char_value;
@@ -62,6 +64,33 @@ instr_orig_t* instr_orig_t_new (instr_t* instr) {
     instr_orig_t* i;
     i = malloc(sizeof(instr_orig_t));
     i->address = toNum(instr->arg1);
+    address = originAddress;
+    return i;
+}
+
+uint16_t calcOffset(char* label) {
+    int i;
+    int offset;
+    int labelAddress;
+    for (i = 0; i < numOfLabels; i++) {
+        if (!strcmp(label,symbolTable[i].symbol)) {
+            labelAddress = symbolTable[i].address;
+            break;
+        }
+    }
+    offset = (labelAddress - (address + 2)) / 2;
+    printf("offset = (%x - (%x + 2)) / 2 = %d\n", labelAddress, address, offset);
+    return offset;
+}
+
+instr_lea_t* instr_lea_t_new (instr_t* instr) {
+    uint16_t offset;
+    instr_lea_t* i;
+    i = malloc(sizeof(instr_general_t));
+    i->opcode = 14;
+    i->DR1 = reg_to_uint16_t(instr->arg1);
+    offset = calcOffset(instr->arg2);
+    i->offset = offset;
     return i;
 }
 
@@ -70,6 +99,8 @@ instr_general_t* repInstruction(instr_t* instr) {
         return instr_add_imm_t_new(instr);
     } else if (!strcmp(instr->opcode, ".orig")) {
         return instr_orig_t_new(instr);
+    } else if (!strcmp(instr->opcode, "lea")) {
+        return instr_lea_t_new(instr);
     }
     
         /*
