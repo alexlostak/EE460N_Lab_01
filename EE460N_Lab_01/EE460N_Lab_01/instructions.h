@@ -67,6 +67,17 @@ typedef struct instr_and_sr {
     uint16_t opcode : 4;
 } instr_and_sr_t;
 
+typedef struct instr_fill {
+    uint16_t number : 16;
+} instr_fill_t;
+
+typedef struct instr_jmp {
+    uint16_t opspec : 6;
+    uint16_t baseR : 3;
+    uint16_t DR1 : 3;
+    uint16_t opcode : 4;
+} instr_jmp_t;
+
 typedef struct instr_jsr {
     uint16_t offset : 11;
     uint16_t steering : 1;
@@ -81,10 +92,25 @@ typedef struct instr_jsrr {
     uint16_t opcode : 4;
 } instr_jsrr_t;
 
-typedef struct instr_rti {
-    uint16_t zeros : 12;
+typedef struct instr_lea {
+    uint16_t offset : 9;
+    uint16_t DR1 : 3;
     uint16_t opcode : 4;
-} instr_rti_t;
+} instr_lea_t;
+
+typedef struct instr_ldb {
+    uint16_t boffset : 6;
+    uint16_t baseR : 3;
+    uint16_t DR1 : 3;
+    uint16_t opcode : 4;
+} instr_ldb_t;
+
+typedef  struct instr_ldw {
+    uint16_t boffset : 6;
+    uint16_t baseR : 3;
+    uint16_t DR1 : 3;
+    uint16_t opcode : 4;
+} instr_ldw_t;
 
 typedef struct instr_lshf {
     uint16_t amount : 4;
@@ -93,6 +119,21 @@ typedef struct instr_lshf {
     uint16_t DR : 3;
     uint16_t opcode : 4;
 } instr_lshf_t;
+
+typedef struct instr_not {
+    uint16_t opspec : 5;
+    uint16_t A : 1;
+    uint16_t SR1 : 3;
+    uint16_t DR1 : 3;
+    uint16_t opcode : 4;
+} instr_not_t;
+
+typedef struct instr_ret {
+    uint16_t opspec : 6;
+    uint16_t SR1 : 3;
+    uint16_t DR1 : 3;
+    uint16_t opcode : 4;
+} instr_ret_t;
 
 typedef struct instr_rshfl {
     uint16_t amount : 4;
@@ -109,6 +150,11 @@ typedef struct instr_rshfa {
     uint16_t DR : 3;
     uint16_t opcode : 4;
 } instr_rshfa_t;
+
+typedef struct instr_rti {
+    uint16_t zeros : 12;
+    uint16_t opcode : 4;
+} instr_rti_t;
 
 typedef struct instr_xor_sr {
     uint16_t SR2 : 3;
@@ -130,41 +176,19 @@ typedef struct instr_nop {
     uint16_t zeros : 16;
 } instr_nop_t;
 
-typedef struct instr_fill {
-    uint16_t number : 16;
-} instr_fill_t;
-
-typedef struct instr_jmp {
-    uint16_t opspec : 6;
-    uint16_t baseR : 3;
-    uint16_t DR1 : 3;
+typedef struct instr_br {
+    uint16_t pcoffset : 9;
+    uint16_t p : 1;
+    uint16_t z : 1;
+    uint16_t n : 1;
     uint16_t opcode : 4;
-} instr_jmp_t;
-
-typedef struct instr_not {
-    uint16_t opspec : 5;
-    uint16_t A : 1;
-    uint16_t SR1 : 3;
-    uint16_t DR1 : 3;
-    uint16_t opcode : 4;
-} instr_not_t;
-
-typedef struct instr_ret {
-    uint16_t opspec : 6;
-    uint16_t SR1 : 3;
-    uint16_t DR1 : 3;
-    uint16_t opcode : 4;
-} instr_ret_t;
+} instr_br_t;
 
 typedef struct instr_orig {
     uint16_t address : 16;
 } instr_orig_t;
 
-typedef struct instr_lea {
-    uint16_t offset : 9;
-    uint16_t DR1 : 3;
-    uint16_t opcode : 4;
-} instr_lea_t;
+
 
 instr_t* instr_new (char* lLabel, char* lOpcode, char* lArg1, char* lArg2, char* lArg3, char* lArg4);
 instr_general_t* repInstruction(instr_t* i);

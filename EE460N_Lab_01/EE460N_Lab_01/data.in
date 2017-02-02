@@ -12,7 +12,8 @@ NOT R1, R4
 JMP R1
 JSR this
 AND R2, R1, #8
-RSHFL R3, R4, #8
+LDB R4, R4, #10
+LDW R4, R4, #2
 RET
 .fill xFADD
 .END

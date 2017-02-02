@@ -20,6 +20,21 @@ uint16_t reg_to_uint16_t (char* reg) {
     return char_value;
 }
 
+/*
+ Take base offset and convert to uint16_t
+ */
+uint16_t boffest_to_uint16_t (char* boffset) {
+    uint16_t boffset_value;
+    uint16_t len;
+    int i;
+    boffset_value = 0;
+    len = strlen(boffset);
+    for(i=0; i<len; i++){
+        boffset_value = boffset_value * 10 + ( boffset[i] - '0' );
+    }
+    return boffset_value;
+}
+
 int isSourceARegister(char* final_arg) {
     if (final_arg[0] == 35) {
         return 1;
@@ -41,6 +56,17 @@ uint16_t calcOffset(char* label) {
     offset = (labelAddress - (address + 2)) / 2;
     printf("offset = (%x - (%x + 2)) / 2 = %d\n", labelAddress, address, offset);
     return offset;
+}
+
+instr_t* instr_br_new(instr_t* instr) {
+    instr_br_t* i;
+    uint16_t offset;
+    uint16_t arg4;
+    i = malloc(sizeof(instr_br_t));
+    arg4 = boffest_to_uint16_t(instr->arg4);
+    i->pcoffset = arg4;
+    i->opcode = 0;
+    return i;
 }
 
 instr_t* instr_new (char* lLabel, char* lOpcode, char* lArg1, char* lArg2, char* lArg3, char* lArg4) {
@@ -204,23 +230,40 @@ instr_rti_t* instr_rti_t_new (instr_t* instr) {
     return i;
 }
 
-instr_lshf_t* instr_lshf_t_new (instr_t* instr) {
-    instr_lshf_t* i;
+instr_ldb_t* instr_ldb_t_new (instr_t* instr) {
+    instr_ldb_t* i;
+    uint16_t arg1;
+    uint16_t arg2;
+    uint16_t arg3;
     i = malloc(sizeof(instr_general_t));
-    i->opcode = 13;
-    i->DR = reg_to_uint16_t(instr->arg1);
-    i->SR = reg_to_uint16_t(instr->arg2);
-    i->zeros = 0;
-    i->amount = toNum(instr->arg3);
+    arg1 = reg_to_uint16_t(instr->arg1);
+    arg2 = reg_to_uint16_t(instr->arg2);
+    arg3 = boffest_to_uint16_t(instr->arg3 + 1);
+    i->opcode = 2;
+    i->DR1 = arg1;
+    i->baseR = arg2;
+    i->boffset = arg3;
     return i;
 }
 
-instr_rshfl_t* instr_rshfl_t_new (instr_t* instr) {
-    instr_rshfl_t* i;
+instr_ldw_t* instr_ldw_t_new (instr_t* instr) {
+    instr_ldw_t* i;
+    uint16_t arg1;
+    uint16_t arg2;
+    uint16_t arg3;
     i = malloc(sizeof(instr_general_t));
-    i->opcode = 13;
-    i->DR = reg_to_uint16_t(instr->arg1);
-    i->SR = reg_to_uint16_t(instr->arg2);
+    arg1 = reg_to_uint16_t(instr->arg1);
+    arg2 = reg_to_uint16_t(instr->arg2);
+    arg3 = boffest_to_uint16_t(instr->arg3 + 1);
+    i->opcode = 6;
+    i->DR1 = arg1;
+    i->baseR = arg2;
+    i->boffset = arg3;
+    return i;
+}
+
+instr_lshf_t* instr_lshf_t_new (instr_t* instr) {
+    instr_lshf_t* i;;    i->SR = reg_to_uint16_t(instr->arg2);
     i->zeros = 1;
     i->amount = toNum(instr->arg3);
     return i;
@@ -233,6 +276,17 @@ instr_rshfa_t* instr_rshfa_t_new (instr_t* instr) {
     i->DR = reg_to_uint16_t(instr->arg1);
     i->SR = reg_to_uint16_t(instr->arg2);
     i->zeros = 3;
+    i->amount = toNum(instr->arg3);
+    return i;
+}
+
+instr_rshfl_t* instr_rshfl_t_new (instr_t* instr) {
+    instr_rshfl_t* i;
+    i = malloc(sizeof(instr_general_t));
+    i->opcode = 13;
+    i->DR = reg_to_uint16_t(instr->arg1);
+    i->SR = reg_to_uint16_t(instr->arg2);
+    i->zeros = 1;
     i->amount = toNum(instr->arg3);
     return i;
 }
@@ -304,6 +358,31 @@ instr_ret_t* instruction_ret(instr_t* instr) {
     return instr_ret_t_new(instr);
 }
 
+instr_ldb_t* instruction_ldb(instr_t* instr) {
+    return instr_ldb_t_new(instr);
+}
+
+instr_ldw_t* instruction_ldw(instr_t* instr) {
+    return instr_ldw_t_new(instr);
+}
+
+instr_ldb_t* instruction_stb(instr_t* instr) {
+    instr_ldb_t* i;
+    i = instr_ldb_t_new(instr);
+    i->opcode = 3;
+    return i;
+}
+
+instr_ldw_t* instruction_stw(instr_t* instr) {
+    instr_ldw_t* i;
+    i = instr_ldw_t_new(instr);
+    i->opcode = 7;
+    return i;
+}
+
+instr_br_t* instruction_br(instr_t* instr) {
+    return(instr_br_new(instr));
+}
 
 instr_general_t* repInstruction(instr_t* instr) {
     if (!strcmp(instr->opcode, "add")) {
@@ -314,6 +393,10 @@ instr_general_t* repInstruction(instr_t* instr) {
         return instruction_jmp(instr);
     } else if (!strcmp(instr->opcode, "lea")) {
         return instruction_lea(instr);
+    } else if (!strcmp(instr->opcode, "ldb")) {
+        return instruction_ldb(instr);
+    } else if (!strcmp(instr->opcode, "ldw")) {
+        return instruction_ldw(instr);
     } else if (!strcmp(instr->opcode, "not")) {
         return instruction_not(instr);
     } else if (!strcmp(instr->opcode, "ret")) {
