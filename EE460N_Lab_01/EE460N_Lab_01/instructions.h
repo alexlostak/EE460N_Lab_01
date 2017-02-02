@@ -126,6 +126,10 @@ typedef struct instr_xor_imm {
     uint16_t opcode : 4;
 } instr_xor_imm_t;
 
+typedef struct instr_nop {
+    uint16_t zeros : 16;
+} instr_nop_t;
+
 typedef struct instr_fill {
     uint16_t number : 16;
 } instr_fill_t;

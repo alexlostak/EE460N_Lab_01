@@ -20,13 +20,6 @@ uint16_t reg_to_uint16_t (char* reg) {
     return char_value;
 }
 
-int determine_add(char* final_arg) {
-    if (final_arg[0] == 35) {
-        return 1;
-    }
-    return 0;
-}
-
 int isSourceARegister(char* final_arg) {
     if (final_arg[0] == 35) {
         return 1;
@@ -35,15 +28,16 @@ int isSourceARegister(char* final_arg) {
 }
 
 uint16_t calcOffset(char* label) {
-    int i;
-    int offset;
-    int labelAddress;
+    int i = 0;
+    int offset = 0;
+    int labelAddress = 0;
     for (i = 0; i < numOfLabels; i++) {
         if (!strcmp(label,symbolTable[i].symbol)) {
             labelAddress = symbolTable[i].address;
             break;
         }
     }
+    if (i >= numOfLabels ) { exit(1); }
     offset = (labelAddress - (address + 2)) / 2;
     printf("offset = (%x - (%x + 2)) / 2 = %d\n", labelAddress, address, offset);
     return offset;
@@ -272,6 +266,13 @@ instr_fill_t* instr_fill_t_new (instr_t* instr) {
     return i;
 }
 
+instr_fill_t* instr_nop_t_new (instr_t* instr) {
+    instr_nop_t* i;
+    i = malloc(sizeof(instr_general_t));
+    i->zeros = 0;
+    return i;
+}
+
 instr_general_t* instr_xor_new (instr_t* instr) {
     if (isSourceARegister(instr->arg1)) {
         return instr_xor_sr_t_new(instr);
@@ -281,7 +282,7 @@ instr_general_t* instr_xor_new (instr_t* instr) {
 }
 
 instr_general_t* instruction_add(instr_t* instr) {
-    if (determine_add(instr->arg3)) {
+    if (isSourceARegister(instr->arg3)) {
         return instr_add_imm_t_new(instr);
     }
     return instr_add_sr_t_new(instr);
@@ -335,6 +336,8 @@ instr_general_t* repInstruction(instr_t* instr) {
         return instr_xor_new(instr);
     } else if (!strcmp(instr->opcode, ".fill")) {
         return instr_fill_t_new(instr);
+    } else if (!strcmp(instr->opcode, "nop")) {
+        return instr_nop_t_new(instr);
     } else if (!strcmp(instr->opcode, ".end")) {
          exit(1);               /* What do we do here? */
     } else {
