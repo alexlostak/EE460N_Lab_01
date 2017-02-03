@@ -9,6 +9,10 @@
 #ifndef instructions_h
 #define instructions_h
 
+enum{
+    SIGNED, UNSIGNED
+};
+
 typedef struct symboltable {
     char* symbol;
     int address;
@@ -35,7 +39,7 @@ typedef struct instr_general{
 } instr_general_t;
 
 typedef struct instr_add_imm {
-    uint16_t imm5 : 5;
+    int16_t imm5 : 5;
     uint16_t A : 1;
     uint16_t SR1 : 3;
     uint16_t DR1 : 3;
@@ -52,7 +56,7 @@ typedef struct instr_add_sr {
 } instr_add_sr_t;
 
 typedef struct instr_and_imm {
-    uint16_t imm5 : 5;
+    int16_t imm5 : 5;
     uint16_t one : 1;
     uint16_t SR1 : 3;
     uint16_t DR1 : 3;
@@ -68,7 +72,7 @@ typedef struct instr_and_sr {
 } instr_and_sr_t;
 
 typedef struct instr_fill {
-    uint16_t number : 16;
+    int16_t number : 16;
 } instr_fill_t;
 
 typedef struct instr_jmp {
@@ -99,14 +103,14 @@ typedef struct instr_lea {
 } instr_lea_t;
 
 typedef struct instr_ldb {
-    uint16_t boffset : 6;
+    int16_t boffset : 6;
     uint16_t baseR : 3;
     uint16_t DR1 : 3;
     uint16_t opcode : 4;
 } instr_ldb_t;
 
 typedef  struct instr_ldw {
-    uint16_t boffset : 6;
+    int16_t boffset : 6;
     uint16_t baseR : 3;
     uint16_t DR1 : 3;
     uint16_t opcode : 4;
@@ -165,7 +169,7 @@ typedef struct instr_xor_sr {
 } instr_xor_sr_t;
 
 typedef struct instr_xor_imm {
-    uint16_t imm5 : 5;
+    int16_t imm5 : 5;
     uint16_t one : 1;
     uint16_t SR : 3;
     uint16_t DR : 3;

@@ -30,11 +30,13 @@ void parseLoop(void (*doWorkOnFile)() ) {
     int lRet;
     lInfile = fopen( inputFile, "r" );
     output = fopen( outputFile, "w" );
+    
     do
     {
         lRet = readAndParse( lInfile, lLine, &lLabel,
                             &lOpcode, &lArg1, &lArg2, &lArg3, &lArg4 );
         if(lRet != DONE && lRet != EMPTY_LINE ) {
+            
             (*doWorkOnFile)();
         }
     } while( lRet != DONE );
@@ -71,7 +73,12 @@ void assemble() {
 
 void setInputOutput(int argc, const char * argv[]) {
     if (argc > 1) {
-        inputFile = (char*) argv[1];
+        /*inputFile = malloc(strlen(argv[1]) + 1);
+        outputFile = malloc(strlen(argv[1]) + 1);
+        strcpy(inputFile, argv[1]);
+        strcpy(outputFile, argv[2]);
+         */
+         inputFile = (char*) argv[1];
         outputFile = (char*) argv[2];
         printf("input = %s and output = %s\n", inputFile, outputFile);
     } else {
