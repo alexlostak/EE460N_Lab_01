@@ -121,6 +121,7 @@ instr_t* instr_br_new(instr_t* instr) {
     uint16_t offset;
     uint16_t arg1;
     i = malloc(sizeof(instr_br_t));
+    isValidLabel(instr->arg1);
     arg1 = calcOffset(instr->arg1);
     error_check_4(arg1, 9);
     i->pcoffset = arg1;
