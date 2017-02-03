@@ -2,7 +2,7 @@
 .ORIG x3000
 hello ADD R1, R2, #5
 lea R2, this
-ADD R2, R2, #6
+ADD R2, R2, #
 ADD R3, R2, #7
 ADD R4, R2, #8
 this ADD R5, R2, #9
@@ -11,6 +11,7 @@ ADD R1, R2, #5
 NOT R1, R4
 JMP R1
 JSR this
+blu R2, R4, #8
 AND R2, R1, #8
 LDB R4, R4, #10
 LDW R4, R4, #2

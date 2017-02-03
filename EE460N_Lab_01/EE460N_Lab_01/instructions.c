@@ -14,6 +14,40 @@ int address = 0;
 int numOfLabels = 0;
 SymbolTable_t* symbolTable;
 
+
+
+
+void error_check_3(int number, int signedness, int numOfBits) {
+    int max = 0;
+    int min = 0;
+    if ((number < 0) && (signedness == UNSIGNED)) {
+        exit(3);
+    }
+    if (signedness == UNSIGNED) {
+        max = (1 << numOfBits) - 1;
+        if ((number < 0) || (number > max)) {
+            printf("unsigned number bad value\, %d\n", number);
+            exit(3);
+        }
+    } else if (signedness == SIGNED) {
+        max = (1 << (numOfBits - 1)) - 1;
+        min = -(1 << (numOfBits - 1));
+        if ((number < min) || (number > max)) {
+            printf("signed number bad value, %d\n", number);
+            exit(3);
+        }
+    }
+}
+
+void error_check_4(int number, int numOfBits) {
+    int max = (1 << (numOfBits - 1)) - 1;
+    int min = -(1 << (numOfBits - 1));
+        if ((number < min) || (number > max)) {
+            printf("LABEL signed number bad value, %d\n", number);
+            exit(4);
+        }
+}
+
 uint16_t reg_to_uint16_t (char* reg) {
     uint16_t char_value;
     char_value = reg[1] - 48; //ASCII value of 0;
@@ -36,7 +70,7 @@ uint16_t boffest_to_uint16_t (char* boffset) {
 }
 
 int isSourceARegister(char* final_arg) {
-    if (final_arg[0] == 35) {
+    if (final_arg[0] == 114) {
         return 1;
     }
     return 0;
@@ -63,7 +97,8 @@ instr_t* instr_br_new(instr_t* instr) {
     uint16_t offset;
     uint16_t arg1;
     i = malloc(sizeof(instr_br_t));
-    arg1 = toNum(instr->arg1);
+    arg1 = calcOffset(instr->arg1);
+    error_check_4(arg1, 9);
     i->pcoffset = arg1;
     i->opcode = 0;
     return i;
@@ -84,11 +119,12 @@ instr_t* instr_new (char* lLabel, char* lOpcode, char* lArg1, char* lArg2, char*
 instr_add_imm_t* instr_add_imm_t_new (instr_t* instr) {
     uint16_t arg1;
     uint16_t arg2;
-    uint16_t imm5;
+    int16_t imm5;
     instr_add_imm_t* i;
     arg1 = reg_to_uint16_t(instr->arg1);
     arg2 = reg_to_uint16_t(instr->arg2);
     imm5 = toNum(instr->arg3);
+    error_check_3(imm5, SIGNED, 5);
     i = malloc(sizeof(instr_add_imm_t));
     i->opcode = 1; //ADD OPCODE
     i->DR1 = arg1;
@@ -154,32 +190,42 @@ instr_ret_t* instr_ret_t_new(instr_t* instr) {
 }
 
 instr_orig_t* instr_orig_t_new (instr_t* instr) {
+    int temp;
     instr_orig_t* i;
     i = malloc(sizeof(instr_orig_t));
     i->address = toNum(instr->arg1);
     address = originAddress;
+    temp = address % 2;
+    if (temp == 1) {
+        exit(3);
+    }
+    error_check_3(address, UNSIGNED, 16);
     return i;
 }
 
 instr_lea_t* instr_lea_t_new (instr_t* instr) {
-    uint16_t offset;
+    int16_t offset;
     instr_lea_t* i;
     i = malloc(sizeof(instr_general_t));
     i->opcode = 14;
     i->DR1 = reg_to_uint16_t(instr->arg1);
     offset = calcOffset(instr->arg2);
+    error_check_4(offset, 9);
     i->offset = offset;
     return i;
 }
 
 instr_and_imm_t* instr_and_imm_t_new (instr_t* instr) {
     instr_and_imm_t* i;
+    int16_t imm5;
     i = malloc(sizeof(instr_general_t));
     i->opcode = 5;
     i->DR1 = reg_to_uint16_t(instr->arg1);
     i->SR1 = reg_to_uint16_t(instr->arg2);
     i->one = 1;
-    i->imm5 = toNum(instr->arg3);
+    imm5 = toNum(instr->arg3);
+    error_check_3(imm5, SIGNED, 5);
+    i->imm5 = imm5;
     return i;
 }
 
@@ -204,17 +250,20 @@ instr_general_t* instr_and_new (instr_t* instr) {
 
 instr_jsr_t* instr_jsr_t_new (instr_t* instr) {
     instr_jsr_t* i;
+    int16_t offset = 0;
     i = malloc(sizeof(instr_general_t));
-    i->opcode = 0100;
+    i->opcode = 4;
     i->steering = 1;
-    i->offset = calcOffset(instr->arg1);
+    offset = calcOffset(instr->arg1);
+    error_check_4(offset, 11);
+    i->offset = offset;
     return i;
 }
 
 instr_jsrr_t* instr_jsrr_t_new (instr_t* instr) {
     instr_jsrr_t* i;
     i = malloc(sizeof(instr_general_t));
-    i->opcode = 0100;
+    i->opcode = 4;
     i->steering = 0;
     i->zeros = 0;
     i->baseReg = reg_to_uint16_t(instr->arg1);
@@ -234,11 +283,12 @@ instr_ldb_t* instr_ldb_t_new (instr_t* instr) {
     instr_ldb_t* i;
     uint16_t arg1;
     uint16_t arg2;
-    uint16_t arg3;
+    int16_t arg3;
     i = malloc(sizeof(instr_general_t));
     arg1 = reg_to_uint16_t(instr->arg1);
     arg2 = reg_to_uint16_t(instr->arg2);
     arg3 = toNum(instr->arg3);
+    error_check_3(arg3, SIGNED, 6);
     i->opcode = 2;
     i->DR1 = arg1;
     i->baseR = arg2;
@@ -250,11 +300,12 @@ instr_ldw_t* instr_ldw_t_new (instr_t* instr) {
     instr_ldw_t* i;
     uint16_t arg1;
     uint16_t arg2;
-    uint16_t arg3;
+    int16_t arg3;
     i = malloc(sizeof(instr_general_t));
     arg1 = reg_to_uint16_t(instr->arg1);
     arg2 = reg_to_uint16_t(instr->arg2);
     arg3 = toNum(instr->arg3);
+    error_check_3(arg3, SIGNED, 6);
     i->opcode = 6;
     i->DR1 = arg1;
     i->baseR = arg2;
@@ -263,31 +314,44 @@ instr_ldw_t* instr_ldw_t_new (instr_t* instr) {
 }
 
 instr_lshf_t* instr_lshf_t_new (instr_t* instr) {
-    instr_lshf_t* i;;    i->SR = reg_to_uint16_t(instr->arg2);
-    i->zeros = 1;
-    i->amount = toNum(instr->arg3);
+    uint16_t amount = 0;
+    instr_lshf_t* i;
+    i = malloc(sizeof(instr_general_t));
+    i->opcode = 13;
+    i->DR = reg_to_uint16_t(instr->arg1);
+    i->SR = reg_to_uint16_t(instr->arg2);
+    i->zeros = 0;
+    amount = toNum(instr->arg3);
+    error_check_3(amount, UNSIGNED, 4);
+    i->amount = amount;
     return i;
 }
 
 instr_rshfa_t* instr_rshfa_t_new (instr_t* instr) {
     instr_rshfa_t* i;
+    uint16_t amount = 0;
     i = malloc(sizeof(instr_general_t));
     i->opcode = 13;
     i->DR = reg_to_uint16_t(instr->arg1);
     i->SR = reg_to_uint16_t(instr->arg2);
     i->zeros = 3;
-    i->amount = toNum(instr->arg3);
+    amount = toNum(instr->arg3);
+    error_check_3(amount, UNSIGNED, 4);
+    i->amount = amount;
     return i;
 }
 
 instr_rshfl_t* instr_rshfl_t_new (instr_t* instr) {
     instr_rshfl_t* i;
+    uint16_t amount = 0;
     i = malloc(sizeof(instr_general_t));
     i->opcode = 13;
     i->DR = reg_to_uint16_t(instr->arg1);
     i->SR = reg_to_uint16_t(instr->arg2);
     i->zeros = 1;
-    i->amount = toNum(instr->arg3);
+    amount = toNum(instr->arg3);
+    error_check_3(amount, UNSIGNED, 4);
+    i->amount = amount;
     return i;
 }
 
@@ -304,12 +368,15 @@ instr_xor_sr_t* instr_xor_sr_t_new (instr_t* instr) {
 
 instr_xor_imm_t* instr_xor_imm_t_new (instr_t* instr) {
     instr_xor_imm_t* i;
+    int16_t imm5;
     i = malloc(sizeof(instr_general_t));
     i->opcode = 9;
     i->DR = reg_to_uint16_t(instr->arg1);
     i->SR = reg_to_uint16_t(instr->arg2);
     i->one = 1;
-    i->imm5 = toNum(instr->arg3);
+    imm5 = toNum(instr->arg3);
+    error_check_3(imm5, SIGNED, 5);
+    i->imm5 = imm5;
     return i;
 }
 
@@ -424,7 +491,8 @@ instr_general_t* repInstruction(instr_t* instr) {
     } else if (!strcmp(instr->opcode, ".end")) {
          exit(1);               /* What do we do here? */
     } else {
-        return NULL;
+        printf("invalid opcode\n");
+        exit(2);
     }
 }
 
