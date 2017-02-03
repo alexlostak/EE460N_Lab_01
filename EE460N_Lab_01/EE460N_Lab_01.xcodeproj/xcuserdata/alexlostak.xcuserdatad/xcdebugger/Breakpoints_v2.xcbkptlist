@@ -15,7 +15,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "257"
             endingLineNumber = "257"
-            landmarkName = "instr_ldw_t_new()"
+            landmarkName = "instr_jsr_t_new()"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>

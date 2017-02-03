@@ -452,6 +452,7 @@ instr_br_t* instruction_br(instr_t* instr) {
 }
 
 instr_general_t* repInstruction(instr_t* instr) {
+    instr_br_t* branchPointer;
     if (!strcmp(instr->opcode, "add")) {
         return instruction_add(instr);
     } else if (!strcmp(instr->opcode, ".orig")) {
@@ -488,7 +489,42 @@ instr_general_t* repInstruction(instr_t* instr) {
         return instr_fill_t_new(instr);
     } else if (!strcmp(instr->opcode, "nop")) {
         return instr_nop_t_new(instr);
-    } else if (!strcmp(instr->opcode, ".end")) {
+    } else if (!strcmp(instr->opcode, "br")) {
+        return (instruction_br(instr));
+    } else if (!strcmp(instr->opcode, "brn")) {
+        branchPointer = instruction_br(instr);
+        branchPointer->n = 1;
+        return branchPointer;
+    } else if (!strcmp(instr->opcode, "brz")) {
+        branchPointer = instruction_br(instr);
+        branchPointer->z = 1;
+        return branchPointer;
+    } else if (!strcmp(instr->opcode, "brp")) {
+        branchPointer = instruction_br(instr);
+        branchPointer->p = 1;
+        return branchPointer;
+    } else if (!strcmp(instr->opcode, "brzp")) {
+        branchPointer = instruction_br(instr);
+        branchPointer->p = 1;
+        branchPointer->z = 1;
+        return branchPointer;
+    } else if (!strcmp(instr->opcode, "brnp")) {
+        branchPointer = instruction_br(instr);
+        branchPointer->p = 1;
+        branchPointer->n = 1;
+        return branchPointer;
+    }  else if (!strcmp(instr->opcode, "brnz")) {
+        branchPointer = instruction_br(instr);
+        branchPointer->n = 1;
+        branchPointer->z = 1;
+        return branchPointer;
+    } else if (!strcmp(instr->opcode, "brnzp")) {
+        branchPointer = instruction_br(instr);
+        branchPointer->n = 1;
+        branchPointer->z = 1;
+        branchPointer->p = 1;
+        return branchPointer;
+    }     else if (!strcmp(instr->opcode, ".end")) {
          exit(1);               /* What do we do here? */
     } else {
         printf("invalid opcode\n");
