@@ -61,10 +61,10 @@ uint16_t calcOffset(char* label) {
 instr_t* instr_br_new(instr_t* instr) {
     instr_br_t* i;
     uint16_t offset;
-    uint16_t arg4;
+    uint16_t arg1;
     i = malloc(sizeof(instr_br_t));
-    arg4 = boffest_to_uint16_t(instr->arg4);
-    i->pcoffset = arg4;
+    arg1 = toNum(instr->arg1);
+    i->pcoffset = arg1;
     i->opcode = 0;
     return i;
 }
@@ -238,7 +238,7 @@ instr_ldb_t* instr_ldb_t_new (instr_t* instr) {
     i = malloc(sizeof(instr_general_t));
     arg1 = reg_to_uint16_t(instr->arg1);
     arg2 = reg_to_uint16_t(instr->arg2);
-    arg3 = boffest_to_uint16_t(instr->arg3 + 1);
+    arg3 = toNum(instr->arg3);
     i->opcode = 2;
     i->DR1 = arg1;
     i->baseR = arg2;
@@ -254,7 +254,7 @@ instr_ldw_t* instr_ldw_t_new (instr_t* instr) {
     i = malloc(sizeof(instr_general_t));
     arg1 = reg_to_uint16_t(instr->arg1);
     arg2 = reg_to_uint16_t(instr->arg2);
-    arg3 = boffest_to_uint16_t(instr->arg3 + 1);
+    arg3 = toNum(instr->arg3);
     i->opcode = 6;
     i->DR1 = arg1;
     i->baseR = arg2;
