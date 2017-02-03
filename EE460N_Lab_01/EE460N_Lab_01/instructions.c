@@ -14,8 +14,25 @@ int address = 0;
 int numOfLabels = 0;
 SymbolTable_t* symbolTable;
 
-
-
+void isValidLabel(char* label) {
+    int len = strlen(label);
+    char char1 = label[0];
+    if(char1 == 'x' || char1 < 'a' || char1 > 'z') {
+        printf("first leter is bad, %c\nexit(4)\n", char1);
+        exit(4);
+    }
+    int i = 0;
+    for (i = 0; i < len; i++) {
+        if (!((label[i] >= 'a' && label[i] <= 'z') || (label[i] >= '0' && label[i] <= '9'))) {
+            printf("%dst letter is bad, %c, in the label '%s'\nexit(4)\n", i + 1, label[i], label);
+            exit(4);
+        }
+    }
+    if (len >= 20) {
+        printf("label is too long, %d, for label %s\nexit(4)\n", i, label);
+        exit(4);
+    }
+}
 
 void error_check_3(int number, int signedness, int numOfBits) {
     int max = 0;
@@ -26,14 +43,14 @@ void error_check_3(int number, int signedness, int numOfBits) {
     if (signedness == UNSIGNED) {
         max = (1 << numOfBits) - 1;
         if ((number < 0) || (number > max)) {
-            printf("unsigned number bad value\, %d\n", number);
+            printf("unsigned number bad value\, %d\nexit(3)\n", number);
             exit(3);
         }
     } else if (signedness == SIGNED) {
         max = (1 << (numOfBits - 1)) - 1;
         min = -(1 << (numOfBits - 1));
         if ((number < min) || (number > max)) {
-            printf("signed number bad value, %d\n", number);
+            printf("signed number bad value, %d\nexit(3)\n", number);
             exit(3);
         }
     }
@@ -43,14 +60,19 @@ void error_check_4(int number, int numOfBits) {
     int max = (1 << (numOfBits - 1)) - 1;
     int min = -(1 << (numOfBits - 1));
         if ((number < min) || (number > max)) {
-            printf("LABEL signed number bad value, %d\n", number);
+            printf("LABEL signed number bad value, %d\nexit(4)\n", number);
             exit(4);
         }
 }
 
 uint16_t reg_to_uint16_t (char* reg) {
+    if (!isSourceARegister(reg)) {
+        printf("not a register\nexit(4)");
+        exit(4);
+    }
     uint16_t char_value;
     char_value = reg[1] - 48; //ASCII value of 0;
+    
     return char_value;
 }
 
@@ -86,7 +108,9 @@ uint16_t calcOffset(char* label) {
             break;
         }
     }
-    if (i >= numOfLabels ) { exit(1); }
+    if (i >= numOfLabels ) {
+         printf("undefined label, %s\nexit(1)\n", label); exit(1);
+    }
     offset = (labelAddress - (address + 2)) / 2;
     printf("offset = (%x - (%x + 2)) / 2 = %d\n", labelAddress, address, offset);
     return offset;
@@ -126,7 +150,7 @@ instr_add_imm_t* instr_add_imm_t_new (instr_t* instr) {
     imm5 = toNum(instr->arg3);
     error_check_3(imm5, SIGNED, 5);
     i = malloc(sizeof(instr_add_imm_t));
-    i->opcode = 1; //ADD OPCODE
+    i->opcode = 1; 
     i->DR1 = arg1;
     i->SR1 = arg2;
     i->A = 1;
@@ -197,6 +221,7 @@ instr_orig_t* instr_orig_t_new (instr_t* instr) {
     address = originAddress;
     temp = address % 2;
     if (temp == 1) {
+        printf("odd number, exit(3)\n");
         exit(3);
     }
     error_check_3(address, UNSIGNED, 16);
@@ -209,6 +234,7 @@ instr_lea_t* instr_lea_t_new (instr_t* instr) {
     i = malloc(sizeof(instr_general_t));
     i->opcode = 14;
     i->DR1 = reg_to_uint16_t(instr->arg1);
+    isValidLabel(instr->arg2);
     offset = calcOffset(instr->arg2);
     error_check_4(offset, 9);
     i->offset = offset;
@@ -254,6 +280,7 @@ instr_jsr_t* instr_jsr_t_new (instr_t* instr) {
     i = malloc(sizeof(instr_general_t));
     i->opcode = 4;
     i->steering = 1;
+    isValidLabel(instr->arg1);
     offset = calcOffset(instr->arg1);
     error_check_4(offset, 11);
     i->offset = offset;
@@ -395,7 +422,7 @@ instr_fill_t* instr_nop_t_new (instr_t* instr) {
 }
 
 instr_general_t* instr_xor_new (instr_t* instr) {
-    if (isSourceARegister(instr->arg1)) {
+    if (isSourceARegister(instr->arg3)) {
         return instr_xor_sr_t_new(instr);
     } else {
         return instr_xor_imm_t_new(instr);
@@ -491,7 +518,7 @@ instr_general_t* repInstruction(instr_t* instr) {
     } else if (!strcmp(instr->opcode, ".end")) {
          exit(1);               /* What do we do here? */
     } else {
-        printf("invalid opcode\n");
+        printf("invalid opcode\nexit(2)\n");
         exit(2);
     }
 }

@@ -50,6 +50,7 @@ void createSymbolTable() {
         originAddress = address;
     }
     if (strcmp(lLabel,"")) {  /* If there is a label*/
+        isValidLabel(lLabel);
         symbolTable[j].symbol = malloc(strlen(lLabel) + 1);
         strcpy(symbolTable[j].symbol, lLabel);
         symbolTable[j].address = address;
