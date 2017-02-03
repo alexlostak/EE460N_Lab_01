@@ -188,6 +188,12 @@ typedef struct instr_br {
     uint16_t opcode : 4;
 } instr_br_t;
 
+typedef struct instr_trap {
+    uint16_t trapvect : 8;
+    uint16_t opspec : 4;
+    uint16_t opcode : 4;
+} instr_trap_t;
+
 typedef struct instr_orig {
     uint16_t address : 16;
 } instr_orig_t;

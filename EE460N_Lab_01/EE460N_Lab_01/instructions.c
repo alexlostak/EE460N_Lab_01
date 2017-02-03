@@ -199,7 +199,7 @@ instr_not_t* instr_not_t_new(instr_t* instr) {
     i->DR1 = arg1;
     i->SR1 = arg2;
     i->A = 1;
-    i->opspec = 9;
+    i->opspec = 31;
     return i;
 }
 
@@ -429,11 +429,22 @@ instr_general_t* instr_xor_new (instr_t* instr) {
     }
 }
 
+instr_trap_t* instr_trap_t_new (instr_t* instr) {
+    instr_trap_t* i;
+    uint16_t arg1;
+    i = malloc(sizeof(instr_trap_t));
+    arg1 = toNum(instr->arg1);
+    i->opcode = 15;
+    i->opspec = 0;
+    i->trapvect = arg1;
+    return i;
+}
+
 instr_general_t* instruction_add(instr_t* instr) {
-    if (isSourceARegister(instr->arg3)) {
-        return instr_add_imm_t_new(instr);
+    if (isSourceARegister(instr->arg3) == 1) {
+        return instr_add_sr_t_new(instr);
     }
-    return instr_add_sr_t_new(instr);
+    return instr_add_imm_t_new(instr);
 }
 
 instr_jmp_t* instruction_jmp(instr_t* instr) {
@@ -478,7 +489,12 @@ instr_br_t* instruction_br(instr_t* instr) {
     return(instr_br_new(instr));
 }
 
+instr_trap_t* instruction_trap(instr_t* instr) {
+    return(instr_trap_t_new(instr));
+}
+
 instr_general_t* repInstruction(instr_t* instr) {
+    instr_br_t* branchPointer;
     if (!strcmp(instr->opcode, "add")) {
         return instruction_add(instr);
     } else if (!strcmp(instr->opcode, ".orig")) {
@@ -509,14 +525,55 @@ instr_general_t* repInstruction(instr_t* instr) {
         return instr_jsrr_t_new(instr);
     } else if (!strcmp(instr->opcode, "rti")) {
         return instr_rti_t_new(instr);
+    } else if (!strcmp(instr->opcode, "trap")) {
+        return instruction_trap(instr);
+    } else if (!strcmp(instr->opcode, "stb")) {
+        return instruction_stb(instr);
+    } else if (!strcmp(instr->opcode, "stw")) {
+        return instruction_stw(instr);
     } else if (!strcmp(instr->opcode, "xor")) {
         return instr_xor_new(instr);
     } else if (!strcmp(instr->opcode, ".fill")) {
         return instr_fill_t_new(instr);
     } else if (!strcmp(instr->opcode, "nop")) {
         return instr_nop_t_new(instr);
-    } else if (!strcmp(instr->opcode, ".end")) {
-         exit(1);               /* What do we do here? */
+    } else if (!strcmp(instr->opcode, "br")) {
+        return (instruction_br(instr));
+    } else if (!strcmp(instr->opcode, "brn")) {
+        branchPointer = instruction_br(instr);
+        branchPointer->n = 1;
+        return branchPointer;
+    } else if (!strcmp(instr->opcode, "brz")) {
+        branchPointer = instruction_br(instr);
+        branchPointer->z = 1;
+        return branchPointer;
+    } else if (!strcmp(instr->opcode, "brp")) {
+        branchPointer = instruction_br(instr);
+        branchPointer->p = 1;
+        return branchPointer;
+    } else if (!strcmp(instr->opcode, "brzp")) {
+        branchPointer = instruction_br(instr);
+        branchPointer->p = 1;
+        branchPointer->z = 1;
+        return branchPointer;
+    } else if (!strcmp(instr->opcode, "brnp")) {
+        branchPointer = instruction_br(instr);
+        branchPointer->p = 1;
+        branchPointer->n = 1;
+        return branchPointer;
+    }  else if (!strcmp(instr->opcode, "brnz")) {
+        branchPointer = instruction_br(instr);
+        branchPointer->n = 1;
+        branchPointer->z = 1;
+        return branchPointer;
+    } else if (!strcmp(instr->opcode, "brnzp")) {
+        branchPointer = instruction_br(instr);
+        branchPointer->n = 1;
+        branchPointer->z = 1;
+        branchPointer->p = 1;
+        return branchPointer;
+    }     else if (!strcmp(instr->opcode, ".end")) {
+         exit(1);               
     } else {
         printf("invalid opcode\nexit(2)\n");
         exit(2);
