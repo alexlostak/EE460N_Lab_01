@@ -1,0 +1,9 @@
+.ORIG X3000
+LEA R0, START
+
+
+
+
+
+
+START .FILL X4000
