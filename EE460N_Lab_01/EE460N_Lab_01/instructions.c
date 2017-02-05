@@ -38,6 +38,7 @@ void error_check_3(int number, int signedness, int numOfBits) {
     int max = 0;
     int min = 0;
     if ((number < 0) && (signedness == UNSIGNED)) {
+        printf("unsigned number neg value\, %d\nexit(3)\n", number);
         exit(3);
     }
     if (signedness == UNSIGNED) {
@@ -342,7 +343,7 @@ instr_ldw_t* instr_ldw_t_new (instr_t* instr) {
 }
 
 instr_lshf_t* instr_lshf_t_new (instr_t* instr) {
-    uint16_t amount = 0;
+    int16_t amount = 0;
     instr_lshf_t* i;
     i = malloc(sizeof(instr_general_t));
     i->opcode = 13;
@@ -357,7 +358,7 @@ instr_lshf_t* instr_lshf_t_new (instr_t* instr) {
 
 instr_rshfa_t* instr_rshfa_t_new (instr_t* instr) {
     instr_rshfa_t* i;
-    uint16_t amount = 0;
+    int16_t amount = 0;
     i = malloc(sizeof(instr_general_t));
     i->opcode = 13;
     i->DR = reg_to_uint16_t(instr->arg1);
@@ -371,7 +372,7 @@ instr_rshfa_t* instr_rshfa_t_new (instr_t* instr) {
 
 instr_rshfl_t* instr_rshfl_t_new (instr_t* instr) {
     instr_rshfl_t* i;
-    uint16_t amount = 0;
+    int16_t amount = 0;
     i = malloc(sizeof(instr_general_t));
     i->opcode = 13;
     i->DR = reg_to_uint16_t(instr->arg1);
@@ -432,9 +433,10 @@ instr_general_t* instr_xor_new (instr_t* instr) {
 
 instr_trap_t* instr_trap_t_new (instr_t* instr) {
     instr_trap_t* i;
-    uint16_t arg1;
+    int16_t arg1;
     i = malloc(sizeof(instr_trap_t));
     arg1 = toNum(instr->arg1);
+    error_check_3(arg1, UNSIGNED, 8);
     i->opcode = 15;
     i->opspec = 0;
     i->trapvect = arg1;
