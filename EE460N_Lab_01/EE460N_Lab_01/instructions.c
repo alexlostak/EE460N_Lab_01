@@ -119,8 +119,7 @@ uint16_t calcOffset(char* label) {
 
 instr_t* instr_br_new(instr_t* instr) {
     instr_br_t* i;
-    uint16_t offset;
-    uint16_t arg1;
+    int16_t arg1;
     i = malloc(sizeof(instr_br_t));
     isValidLabel(instr->arg1);
     arg1 = calcOffset(instr->arg1);

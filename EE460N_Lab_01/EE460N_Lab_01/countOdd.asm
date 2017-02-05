@@ -10,7 +10,7 @@ ADD R3, R3, #1; Increment Current address\
 AND R4, R4, #1; Determine if odd\
 BRnz SKIP; If odd fall through\
 ADD R2, R2, #1; Increment total number of odd\
-SKIP R1, R1, #-1; Decrement total number of remaining numbers to read\
+SKIP ADD R1, R1, #-1; Decrement total number of remaining numbers to read\
 BRp COUNT;\
 STW R2, R5, #0;\
 TRAP x23;\
